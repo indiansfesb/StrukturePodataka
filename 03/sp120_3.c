@@ -10,7 +10,7 @@
 //Prethodnom zadatku dodati funkcije:
 //a) dinamièki dodaje novi element iza odreðenog elementa, + 
 //b) dinamièki dodaje novi element ispred odreðenog elementa, + 
-//c) sortira listu po prezimenima osoba,
+//c) sortira listu po prezimenima osoba, +
 //d) upisuje listu u datoteku, +
 //e) èita listu iz datoteke. +
 
@@ -259,16 +259,14 @@ void addBeforeNode(pos list) {
 			n=0;
 		}
 	}
-	
-	listCount=0;
-	
-	while(list!=NULL) {
-		if(n==listCount)
-			break;
-		prev=list;
-		list=list->next;
-		listCount++;
-	}
+		
+//	while(list!=NULL) {
+//		if(n==listCount)
+//			break;
+//		prev=list;
+//		list=list->next;
+//		listCount++;
+//	}
 	
 	pos temp = NULL;
 	temp = allocateStudentData();
