@@ -23,6 +23,7 @@ int addToList(pos, pos);
 int readFromList(pos, const char*);
 int addToListEnd(pos, pos);
 int mulPolyHelper(pos, pos);
+int printResult(pos, pos, pos);
 
 pos allocateData();
 pos createEmptyList();
@@ -48,6 +49,10 @@ int main(void) {
 		printf("err...");
 		return -1;
 	}
+	printResult(poly1, poly2, sumResult);
+	printResult(poly1, poly2, mulResult);
+
+
 	return 1;
 }
 //5x^2 + 2x^1 + 2
@@ -130,7 +135,7 @@ pos sumPoly(pos poly1, pos poly2) {
 		j = 0;
 	pos next = NULL;
 	if (poly1->next != NULL && poly2->next != NULL) {
-		while (poly1 != NULL) { 
+		while (poly1 != NULL) { //assume they're the same size, sorted input and no dupes
 			temp[i] = allocateData();
 			temp[i]->eksp = poly1->eksp;
 			temp[i]->koef = poly1->koef + poly2->koef;
@@ -203,4 +208,61 @@ int mulPolyHelper(pos mulResult, pos temp) {
 
 	return 1;
 		
+}
+
+int printResult(pos poly1, pos poly2, pos result) {
+	poly1 = poly1->next;
+	poly2 = poly2->next;
+	result = result->next;
+	pos polyTemp = poly1;
+	int polyTempC = 0;
+	pos resultTemp = result;
+	int resultTempC = 0;
+	while (polyTemp != NULL) {
+		polyTempC++;
+		polyTemp = polyTemp->next;
+	}
+	while (resultTemp != NULL) {
+		resultTempC++;
+		resultTemp = resultTemp->next;
+	}
+	printf("(");
+	while (poly1 != NULL) {
+		if (poly1->next == NULL) {
+			printf(" %dx^%d", poly1->koef, poly1->eksp);
+			poly1 = poly1->next;
+		}
+		else {
+			printf(" %dx^%d +", poly1->koef, poly1->eksp);
+			poly1 = poly1->next;
+		}
+	}
+	if (resultTempC > polyTempC)
+		printf(") * (");
+	else
+		printf(") + (");
+	while (poly2 != NULL) {
+		if (poly2->next == NULL) {
+			printf(" %dx^%d", poly2->koef, poly2->eksp);
+			poly2 = poly2->next;
+		}
+		else {
+			printf(" %dx^%d +", poly2->koef, poly2->eksp);
+			poly2 = poly2->next;
+		}
+
+	}
+	printf(") = ");
+	while (result != NULL) {
+		if (result->next == NULL) {
+			printf(" %dx^%d", result->koef, result->eksp);
+			result = result->next;
+		}
+		else {
+			printf(" %dx^%d +", result->koef, result->eksp);
+			result = result->next;
+		}
+	}
+	printf("\n");
+	return 1;
 }
