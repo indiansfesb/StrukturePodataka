@@ -10,7 +10,7 @@
 #define N 1024
 
 typedef struct node* pos;
-
+int flag = 0; //sry
 
 typedef struct node {
 	int koef;
@@ -71,14 +71,14 @@ int readFromList(pos head, const char* filename) {
 	pos temp = NULL;
 	FILE* fp = NULL;
 	fp = fopen(filename, "r");
-	if(fp == NULL)
+	if (fp == NULL)
 		return 0;
 	temp = allocateData();
-		while (fscanf(fp, "%d %d", &temp->koef, &temp->eksp) != EOF) {
-			addToList(head, temp);
-			temp = allocateData();
-		}
-	
+	while (fscanf(fp, "%d %d", &temp->koef, &temp->eksp) != EOF) {
+		addToList(head, temp);
+		temp = allocateData();
+	}
+
 	if (fp)
 		fclose(fp);
 	free(temp);
@@ -106,12 +106,12 @@ int addToList(pos head, pos temp) {
 		head->next = temp;
 		return 1;
 	}
-	
+
 	while (head->next != NULL && head->next->eksp < temp->eksp) { // 2 *4* 5 *1* 4 *3* 8 *2* 7 *5* 
 		head = head->next;
 		next = head->next;
 	}
-		
+
 	if (head->next != NULL && head->eksp < head->next->eksp) {
 		next = head->next;
 		head->next = temp;
@@ -119,41 +119,78 @@ int addToList(pos head, pos temp) {
 	} //check for add before
 	head->next = temp;
 	temp->next = next;
-	
+
 
 	return 1;
 
 }
 
 pos sumPoly(pos poly1, pos poly2) {
-	poly1 = poly1->next; //head removal
+	poly1 = poly1->next;
 	poly2 = poly2->next;
 	pos sumResult = createEmptyList();
-	pos temp[N] = {NULL};
-	int i =0,
-		j = 0;
-	pos next = NULL;
-	if (poly1->next != NULL && poly2->next != NULL) {
-		while (poly1 != NULL) { //diff size fix
-			if (poly1->eksp == poly2->eksp) {
-				temp[i] = allocateData();
-				temp[i]->eksp = poly1->eksp;
-				temp[i]->koef = poly1->koef + poly2->koef;
-				temp[i]->next = NULL;
-				addToListEnd(sumResult, temp[i]);
-			} else if(poly1->eksp != poly2->eksp) {
-				temp[i] = poly2;
-				addToListEnd(sumResult, temp[i]);
-				i++;
-				temp[i] = poly1;
-				addToListEnd(sumResult, temp[i]);
-			}
-			
+	pos temp[N] = { NULL };
+	int i = 0;
+
+	if (temp == NULL) {
+		printf("mem err, returning null...");
+		return NULL;
+	}
+
+	while (poly1 != NULL && poly2 != NULL) {
+		if (poly1->eksp > poly2->eksp) {
+			temp[i] = allocateData();
+			temp[i]->eksp = poly1->eksp;
+			temp[i]->koef = poly1->koef;
+			temp[i]->next = NULL;
+			addToListEnd(sumResult, temp[i]);
+			i++;
+			poly1 = poly1->next;
+		}
+
+		else if (poly2->eksp > poly1->eksp) {
+			temp[i] = allocateData();
+			temp[i]->eksp = poly2->eksp;
+			temp[i]->koef = poly2->koef;
+			temp[i]->next = NULL;
+			addToListEnd(sumResult, temp[i]);
+			i++;
+			poly2 = poly2->next;
+		} else {
+			temp[i] = allocateData();
+			temp[i]->eksp = poly1->eksp;
+			temp[i]->koef = poly1->koef + poly2->koef;
+			temp[i]->next = NULL;
+			addToListEnd(sumResult, temp[i]);
 			i++;
 			poly1 = poly1->next;
 			poly2 = poly2->next;
 		}
+
+
 	}
+	while (poly1 != NULL || poly2 != NULL) {
+		if (poly1 != NULL) {
+			temp[i] = allocateData();
+			temp[i]->eksp = poly1->eksp;
+			temp[i]->koef = poly1->koef;
+			temp[i]->next = NULL;
+			addToListEnd(sumResult, temp[i]);
+			i++;
+			poly1 = poly1->next;
+		}
+		if (poly2 != NULL) {
+			temp[i] = allocateData();
+			temp[i]->eksp = poly2->eksp;
+			temp[i]->koef = poly2->koef;
+			temp[i]->next = NULL;
+			addToListEnd(sumResult, temp[i]);
+			i++;
+			poly2 = poly2->next;
+		}
+	}
+
+
 	return sumResult;
 }
 
@@ -172,7 +209,7 @@ pos mulPoly(pos poly1, pos poly2) {
 				printf("err...");
 				return NULL;
 			}
-			
+
 			poly2 = poly2->next;
 		}
 		poly2 = reset;
@@ -183,8 +220,23 @@ pos mulPoly(pos poly1, pos poly2) {
 }
 
 int addToListEnd(pos sumResult, pos temp) {
+	pos sumRef = sumResult;
+	while (sumRef != NULL) {
+		if (sumRef->eksp == temp->eksp) {
+			while (sumResult->eksp != temp->eksp) {
+				sumResult = sumResult->next;
+			}
+			sumResult->koef = sumResult->koef + temp->koef;
+			return 1;
+		}
+		sumRef = sumRef->next;
+	}
 	if (!sumResult && !temp)
 		return -1;
+	if (sumResult->next == NULL) {
+		sumResult->next = temp;
+		return 1;
+	}
 	while (sumResult->next != NULL)
 		sumResult = sumResult->next;
 	sumResult->next = temp;
@@ -204,7 +256,7 @@ int mulPolyHelper(pos mulResult, pos temp) {
 			mulResult->koef = mulResult->koef + temp->koef;
 			return 1;
 		}
-		if(mulResult->next != NULL)
+		if (mulResult->next != NULL)
 			mulResult = mulResult->next;
 	}
 	if (mulResult->eksp == temp->eksp) {
@@ -215,14 +267,14 @@ int mulPolyHelper(pos mulResult, pos temp) {
 	temp->next = NULL;
 
 	return 1;
-		
+
 }
 
 int printResult(pos poly1, pos poly2, pos result) {
 	poly1 = poly1->next;
 	poly2 = poly2->next;
 	result = result->next;
-	pos polyTemp = poly1;
+	/*pos polyTemp = poly1;
 	int polyTempC = 0;
 	pos resultTemp = result;
 	int resultTempC = 0;
@@ -233,7 +285,7 @@ int printResult(pos poly1, pos poly2, pos result) {
 	while (resultTemp != NULL) {
 		resultTempC++;
 		resultTemp = resultTemp->next;
-	}
+	} */
 	printf("(");
 	while (poly1 != NULL) {
 		if (poly1->next == NULL) {
@@ -245,10 +297,10 @@ int printResult(pos poly1, pos poly2, pos result) {
 			poly1 = poly1->next;
 		}
 	}
-	if (resultTempC > polyTempC)
-		printf(") * (");
-	else
+	if (flag == 0)
 		printf(") + (");
+	else
+		printf(") * (");
 	while (poly2 != NULL) {
 		if (poly2->next == NULL) {
 			printf(" %dx^%d", poly2->koef, poly2->eksp);
@@ -272,5 +324,6 @@ int printResult(pos poly1, pos poly2, pos result) {
 		}
 	}
 	printf("\n-----------------------------------\n");
+	flag = 1;
 	return 1;
 }
