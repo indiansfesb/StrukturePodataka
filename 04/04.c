@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #pragma warning(disable:4996)
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -135,12 +134,21 @@ pos sumPoly(pos poly1, pos poly2) {
 		j = 0;
 	pos next = NULL;
 	if (poly1->next != NULL && poly2->next != NULL) {
-		while (poly1 != NULL) { //assume they're the same size, sorted input and no dupes
-			temp[i] = allocateData();
-			temp[i]->eksp = poly1->eksp;
-			temp[i]->koef = poly1->koef + poly2->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
+		while (poly1 != NULL) { //diff size fix
+			if (poly1->eksp == poly2->eksp) {
+				temp[i] = allocateData();
+				temp[i]->eksp = poly1->eksp;
+				temp[i]->koef = poly1->koef + poly2->koef;
+				temp[i]->next = NULL;
+				addToListEnd(sumResult, temp[i]);
+			} else if(poly1->eksp != poly2->eksp) {
+				temp[i] = poly2;
+				addToListEnd(sumResult, temp[i]);
+				i++;
+				temp[i] = poly1;
+				addToListEnd(sumResult, temp[i]);
+			}
+			
 			i++;
 			poly1 = poly1->next;
 			poly2 = poly2->next;
@@ -263,6 +271,6 @@ int printResult(pos poly1, pos poly2, pos result) {
 			result = result->next;
 		}
 	}
-	printf("\n");
+	printf("\n-----------------------------------\n");
 	return 1;
 }
