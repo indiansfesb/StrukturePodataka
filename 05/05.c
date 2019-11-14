@@ -17,11 +17,12 @@ pos findPresjek(pos, pos);
 
 int sortedEntry(pos);
 int addToList(pos, int);
+int printResult(pos, pos, pos, pos);
 
 int main(void) {
 	int i = 0,
 		count = 0;
-	pos head1= NULL;
+	pos head1 = NULL;
 	head1 = allocateData();
 	pos head2 = NULL;
 	head2 = allocateData();
@@ -51,11 +52,13 @@ int main(void) {
 
 	presjekResult = findPresjek(head1, head2);
 
+	printResult(head1, head2, unijaResult, presjekResult);
 	return 1;
+	
 }
 
 pos allocateData() {
-	pos temp = 0;
+	pos temp = NULL;
 	temp = (pos)malloc(sizeof(data));
 	if (temp == NULL) {
 		printf("out of mem, data not allocated");
@@ -76,10 +79,10 @@ int sortedEntry(pos head) {
 	}
 
 	prev = head;
-	
+
 	printf("Enter a value: ");
 	scanf("%d", &temp->value);
-	
+
 	if (head->next == NULL) {
 		head->next = temp;
 		return 1;
@@ -101,50 +104,50 @@ int sortedEntry(pos head) {
 }
 
 pos findUnija(pos l1, pos l2) {
+	pos result = NULL;
+	l1 = l1->next;
+	l2 = l2->next;
+	result = allocateData();
+	if (result == NULL) {
+		printf("mem err...");
+		return NULL;
+	}
+	while (l1 != NULL) {
+		addToList(result, l1->value);
+		l1 = l1->next;
+	}
+	while (l2 != NULL) {
+		addToList(result, l2->value);
+		l2 = l2->next;
+	}
+	return result;
+}
+
+pos findPresjek(pos l1, pos l2) {
+	l1 = l1->next;
+	l2 = l2->next;
 	pos result = NULL,
 		start = NULL;
-	int flag = 0;
 	result = allocateData();
 	if (result == NULL) {
 		printf("mem err, exiting....");
 		return NULL;
 	}
 	start = l1;
-	l1 = l1->next;
-	while (l1 != NULL) {
-		addToList(result, l1->value);
-		l1 = l1->next;
-	}
-	l1 = start;
 	while (l2 != NULL) {
 		while (l1 != NULL) {
-			if (l2->value == l1->value && flag == 0) {
+			if (l1->value == l2->value) {
 				//add l2->value to the list
-				addToList(result, l2->value);
-				flag = 1;
+				addToList(result, l1->value);
 			}
 			l1 = l1->next;
 		}
-		flag = 0;
-		
+
 		l1 = start;
 		l2 = l2->next;
 	}
 
-
-	return result;
-}
-
-pos findPresjek(pos l1, pos l2) {
-	pos result = NULL;
-	if (result = allocateData() == NULL) {
-		printf("err...");
-		return NULL;
-	}
-
-
-
-	return result;
+	return result; 
 }
 
 
@@ -156,8 +159,58 @@ int addToList(pos result, int value) {
 		return -1;
 	}
 	temp->value = value;
-	while (result->next != NULL)
+	while (result->next != NULL) {
+		if (result->next->value == value) //:SSSSSSS
+			return 2; //2 == duplicate code
 		result = result->next;
+	}
+		
 	result->next = temp;
+	return 1;
+}
+
+
+int printResult(pos l1, pos l2, pos unija, pos presjek) {
+	l1 = l1->next;
+	l2 = l2->next;
+	pos l1Ref, l2Ref = NULL;
+	l1Ref = l1;
+	l2Ref = l2;
+	unija = unija->next;
+	presjek = presjek->next;
+	while (l1 != NULL) {
+		printf("%d ", l1->value);
+		l1 = l1->next;
+	}
+	printf(" justU ");
+	while (l2 != NULL) {
+		printf("%d ", l2->value);
+		l2 = l2->next;
+	}
+	printf(" = ");
+	while (unija != NULL){
+		printf("%d, ", unija->value);
+		unija = unija->next;
+	}
+	printf("\n");
+	l1 = l1Ref;
+	l2 = l2Ref;
+	
+	while (l1 != NULL) {
+		printf("%d ", l1->value);
+		l1 = l1->next;
+	}
+	printf(" upsidedownU ");
+	while (l2 != NULL) {
+		printf("%d, ", l2->value);
+		l2 = l2->next;
+	}
+	printf(" = ");
+	while (presjek != NULL) {
+		printf("%d, ", presjek->value);
+		presjek = presjek->next;
+	}
+	
+	
 	return 1;
 }

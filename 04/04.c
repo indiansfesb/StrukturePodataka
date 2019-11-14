@@ -6,9 +6,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-
-#define N 1024
-
 typedef struct node* pos;
 int flag = 0; //sry
 
@@ -23,6 +20,7 @@ int readFromList(pos, const char*);
 int addToListEnd(pos, pos);
 int mulPolyHelper(pos, pos);
 int printResult(pos, pos, pos);
+int sumHelper(pos, pos);
 
 pos allocateData();
 pos createEmptyList();
@@ -30,20 +28,24 @@ pos sumPoly(pos, pos);
 pos mulPoly(pos, pos);
 
 int main(void) {
-	pos poly1 = createEmptyList();
-	pos poly2 = createEmptyList();
+	pos poly1 = NULL;
+	poly1 = createEmptyList();
+	pos poly2 = NULL;
+	poly2 = createEmptyList();
 	if (!readFromList(poly1, "input.txt"))
 		return -1;
 	if (!readFromList(poly2, "input2.txt"))
 		return -1;
 
-	pos sumResult = sumPoly(poly1, poly2);
+	pos sumResult = NULL;
+	sumResult = sumPoly(poly1, poly2);
 	if (sumResult == NULL) {
 		printf("err...");
 		return -1;
 	}
 
-	pos mulResult = mulPoly(poly1, poly2);
+	pos mulResult = NULL;
+	mulResult = mulPoly(poly1, poly2);
 	if (mulResult == NULL) {
 		printf("err...");
 		return -1;
@@ -100,7 +102,8 @@ pos createEmptyList(void) {
 }
 
 int addToList(pos head, pos temp) {
-	pos next = allocateData();
+	pos next = NULL;
+	next = allocateData();
 	temp->next = NULL;
 	if (head->next == NULL) {
 		head->next = temp;
@@ -124,12 +127,24 @@ int addToList(pos head, pos temp) {
 	return 1;
 
 }
+int sumHelper(pos sumResult, pos temp) {
+	pos newNode = NULL;
+	newNode = allocateData();
+	newNode->eksp = temp->eksp;
+	newNode->koef = temp->koef;
+	newNode->next = NULL;
+	addToListEnd(sumResult, newNode);
+	return 1;
+}
+
 
 pos sumPoly(pos poly1, pos poly2) {
 	poly1 = poly1->next;
 	poly2 = poly2->next;
-	pos sumResult = createEmptyList();
-	pos temp[N] = { NULL };
+	pos sumResult = NULL;
+	sumResult = createEmptyList();
+	pos temp = NULL;
+	temp = allocateData();
 	int i = 0;
 
 	if (temp == NULL) {
@@ -139,30 +154,25 @@ pos sumPoly(pos poly1, pos poly2) {
 
 	while (poly1 != NULL && poly2 != NULL) {
 		if (poly1->eksp > poly2->eksp) {
-			temp[i] = allocateData();
-			temp[i]->eksp = poly1->eksp;
-			temp[i]->koef = poly1->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
-			i++;
+			temp->eksp = poly1->eksp;
+			temp->koef = poly1->koef;
+			temp->next = NULL;
+			sumHelper(sumResult, temp);
 			poly1 = poly1->next;
+
 		}
 
 		else if (poly2->eksp > poly1->eksp) {
-			temp[i] = allocateData();
-			temp[i]->eksp = poly2->eksp;
-			temp[i]->koef = poly2->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
-			i++;
+			temp->eksp = poly2->eksp;
+			temp->koef = poly2->koef;
+			temp->next = NULL;
+			sumHelper(sumResult, temp);
 			poly2 = poly2->next;
 		} else {
-			temp[i] = allocateData();
-			temp[i]->eksp = poly1->eksp;
-			temp[i]->koef = poly1->koef + poly2->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
-			i++;
+			temp->eksp = poly1->eksp;
+			temp->koef = poly1->koef + poly2->koef;
+			temp->next = NULL;
+			sumHelper(sumResult, temp);
 			poly1 = poly1->next;
 			poly2 = poly2->next;
 		}
@@ -171,21 +181,17 @@ pos sumPoly(pos poly1, pos poly2) {
 	}
 	while (poly1 != NULL || poly2 != NULL) {
 		if (poly1 != NULL) {
-			temp[i] = allocateData();
-			temp[i]->eksp = poly1->eksp;
-			temp[i]->koef = poly1->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
-			i++;
+			temp->eksp = poly1->eksp;
+			temp->koef = poly1->koef;
+			temp->next = NULL;
+			sumHelper(sumResult, temp);
 			poly1 = poly1->next;
 		}
 		if (poly2 != NULL) {
-			temp[i] = allocateData();
-			temp[i]->eksp = poly2->eksp;
-			temp[i]->koef = poly2->koef;
-			temp[i]->next = NULL;
-			addToListEnd(sumResult, temp[i]);
-			i++;
+			temp->eksp = poly2->eksp;
+			temp->koef = poly2->koef;
+			temp->next = NULL;
+			sumHelper(sumResult, temp);
 			poly2 = poly2->next;
 		}
 	}
@@ -195,11 +201,13 @@ pos sumPoly(pos poly1, pos poly2) {
 }
 
 pos mulPoly(pos poly1, pos poly2) {
-	pos mulResult = createEmptyList();
+	pos mulResult = NULL;
+	mulResult = createEmptyList();
 	poly1 = poly1->next;
 	poly2 = poly2->next;
 	pos temp = NULL;
-	pos reset = poly2;
+	pos reset = NULL;
+	reset = poly2;
 	while (poly1 != NULL) {
 		while (poly2 != NULL) {
 			temp = allocateData();
