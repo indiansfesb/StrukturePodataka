@@ -17,7 +17,6 @@ typedef struct node {
 int push(pos);
 int pop(pos);
 int pushQ(pos);
-int popQ(pos);
 
 pos allocateData();
 
