@@ -77,7 +77,7 @@ int calcResult(pos head) {
 }
 
 int isItValid(char c) {
-	if(isalpha(c) || c != '+' || c != '-' || c != '/' || c != '*' )
+	if(!isdigit(atoi(c)) || c != '+' || c != '-' || c != '/' || c != '*' )
 		return -1;
 	else
 		return 1;
