@@ -26,8 +26,8 @@ typedef struct node {
 
 typedef struct stack* posS;
 typedef struct stack {
-	posS node;
-	posS next;
+	pos node;
+	posS next; 
 } stack;
 
 
