@@ -27,7 +27,7 @@ typedef struct node {
 typedef struct stack* posS;
 typedef struct stack {
 	pos node;
-	posS next; 
+	posS next;
 } stack;
 
 
@@ -52,18 +52,20 @@ int main(void) {
 	posS stack = allocateDataS();
 	root = allocateData("root"); //             // zove se samo add_child za dodavanje novog dira
 	currentDir = root;
+	push(stack, currentDir);
 	add_child(currentDir, "prvi_dir"); //             // i onda moram cd u taj dir, i prilikom cd-a se se pusha na stack, a prilikom cd.. se popa
 	add_child(currentDir, "drugi dir");
 	add_child(currentDir, "treci dir");
 	currentDir = push(stack, changeDir(currentDir, "treci dir")); // cd "treci dir" ->
 	add_child(currentDir, "cetvrti dir u trecem");
+	currentDir = pop(currentDir); //cd ..
 	return 0;
 }
 
 
 pos changeDir(pos currentDir, char* name) {
 	int flag = 0;
-	while (strcmp(currentDir->name, name) != 0)  { //?
+	while (strcmp(currentDir->name, name) != 0) { //?
 		if (!flag) {
 			currentDir = currentDir->firstC;
 			flag = 1;
