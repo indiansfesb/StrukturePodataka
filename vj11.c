@@ -3,8 +3,8 @@ Napisati kod koji za zadane podatke studenata (matični broj, ime i prezime) pra
 Tablica ima 11 mjesta, a funkcija za preslikavanje ključ računa da se zbraja ASCII vrijednost prvih pet slova prezimena
 i zatim računa ostatak cjelobrojnog dijeljenja te vrijednosti s veličinom tablice.
 Studenti s istim ključem se pohranjuju u vezanu listu sortiranu po prezimenima i imenima.
-Kada se tablica izgradi treba ispisati cijelu tablicu 
-(naglasiti na kojem ključu se nalaze koji podaci) te ponuditi mogućnostda se za 
+Kada se tablica izgradi treba ispisati cijelu tablicu
+(naglasiti na kojem ključu se nalaze koji podaci) te ponuditi mogućnostda se za
 određenog studenta (prezime i ime) ispiše njegov matični broj
 */
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,26 +29,25 @@ typedef struct hashT {
 typedef struct hashT* ht;
 
 ht createHT(int);
-int hash(char*,int);
-int addStudent(ht,char*, char*, int);
+int hash(char*, int);
+int addStudent(ht, char*, char*, int);
 int printTable(ht);
-int printNode(Pos);
-int findMnum(ht);
-int main(){
-	ht table=createHT(11);
-	char code="0";
+int printNode(Pos, int);
+int findMnum(ht table, char* fname, char* lname);
+int main() {
+	ht table = createHT(11);
 	int opt = 0;
 	char fname[25];
 	char lname[25];
 	int mnum;
-	while (code != "-1") {
-		printf("do osmething\n1.add student\n2.find mnum\n3. print table\n");
+	while (opt != '-1') {
+		printf("do osmething\n1.add student\n2.find mnum\n3. print table\n0.exit\n");
 		scanf("%d", &opt);
 		switch (opt) {
 		case 1:
 			printf("tye in name, last name and mnum\n");
 			scanf("%s %s %d", fname, lname, &mnum);
-			addStudent(table,fname, lname, mnum);
+			addStudent(table, fname, lname, mnum);
 			break;
 		case 2:
 			printf("enter name and last name\n");
@@ -58,12 +57,16 @@ int main(){
 		case 3:
 			printTable(table);
 			break;
+		case 0:
+			opt = '-1';
+			break;
 		default:
 			break;
 
 
 		}
 	}
+
 	system("pause");
 	return 0;
 }
@@ -78,17 +81,17 @@ ht createHT(int tblsize)
 	if (table->list == NULL) {
 		return NULL;
 	}
-	for (i = 0;i < tblsize;i++) {
+	for (i = 0; i < tblsize; i++) {
 		Pos node = &table->list[i];
 		node->nextNode = NULL;
 	}
 	table->tableSize = tblsize;
 	return table;
 }
-int hash(char* str,int tabsize) {
+int hash(char* str, int tabsize) {
 	int hashV = 0;
 	int counter = 0;
-	while (*str != '\0'&&counter<5) {
+	while (*str != '\0' && counter < 5) {
 		hashV += *str++;
 		counter++;
 	}
@@ -107,7 +110,7 @@ int addStudent(ht table, char* fname, char* lname, int mnum) {
 	while (nodeptr->nextNode) {
 		if (strcmp(lname, nodeptr->nextNode->lname) < 0) {
 			stu->nextNode = nodeptr->nextNode;
-			nodeptr->nextNode=stu;
+			nodeptr->nextNode = stu;
 			return 0;
 		}
 		else if (strcmp(lname, nodeptr->nextNode->lname) == 0) {
@@ -121,7 +124,7 @@ int addStudent(ht table, char* fname, char* lname, int mnum) {
 			nodeptr = nodeptr->nextNode;
 		}
 	}
-	if(nodeptr->nextNode==NULL){
+	if (nodeptr->nextNode == NULL) {
 		nodeptr->nextNode = stu;
 	}
 	return 0;
@@ -129,28 +132,28 @@ int addStudent(ht table, char* fname, char* lname, int mnum) {
 }
 int printTable(ht table) {
 	int i = 0;
-	Pos node=NULL;
-	for (i = 0;i < table->tableSize;i++) {
-		node=table->list[i].nextNode;
+	Pos node = NULL;
+	for (i = 0; i < table->tableSize; i++) {
+		node = table->list[i].nextNode;
 		while (node) {
-			printNode(node);
+			printNode(node, i);
 			node = node->nextNode;
 		}
 	}
 	return 0;
 }
-int printNode(Pos node) {
+int printNode(Pos node, int index) {
 	if (node) {
-		printf("%s %s %d\n", node->fname, node->lname, node->mnum);
+		printf("%d. %s %s %d\n", index, node->fname, node->lname, node->mnum);
 		return 0;
 	}
 	return -1;
 }
-int findMnum(ht table,char*fname,char*lname) {
+int findMnum(ht table, char* fname, char* lname) {
 	Pos row = &table->list[hash(lname, table->tableSize)];
 	Pos nodeptr = row->nextNode;
 	while (nodeptr) {
-		if (strcmp(lname, nodeptr->lname) == 0&&strcmp(fname,nodeptr->fname)==0) {
+		if (strcmp(lname, nodeptr->lname) == 0 && strcmp(fname, nodeptr->fname) == 0) {
 			return nodeptr->mnum;
 		}
 		else {
